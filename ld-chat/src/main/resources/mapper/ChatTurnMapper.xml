@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ld.chat.mapper.ChatTurnMapper">
+
+    <resultMap id="BaseResultMap" type="com.ld.chat.domain.ChatTurn">
+            <id property="turnId" column="turn_id" jdbcType="BIGINT"/>
+            <result property="sessionId" column="session_id" jdbcType="VARCHAR"/>
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="query" column="query" jdbcType="VARCHAR"/>
+            <result property="answer" column="answer" jdbcType="VARCHAR"/>
+            <result property="orderNo" column="order_no" jdbcType="BIGINT"/>
+            <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        turn_id,session_id,user_id,
+        query,answer,order_no,create_by,
+        create_time,update_by,update_time
+    </sql>
+    <select id="selectChatTurnListBySessionId" parameterType="String" resultType="com.ld.chat.domain.ChatTurn">
+        select
+        <include refid="Base_Column_List"/>
+        from chat_turn
+        where session_id = #{sessionId}
+    </select>
+    <select id="selectChatTurnById" parameterType="String" resultType="com.ld.chat.domain.ChatTurn">
+        select
+        <include refid="Base_Column_List"/>
+        from chat_turn
+        where turn_id = #{turnId}
+    </select>
+    <insert id="insertChatTurn">
+        insert into chat_turn
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="turnId != null">turn_id,</if>
+            <if test="sessionId != null">session_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="query != null">query,</if>
+            <if test="answer != null">answer,</if>
+            <if test="orderNo != null">order_no,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="turnId != null">#{turnId},</if>
+            <if test="sessionId != null">#{sessionId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="query != null">#{query},</if>
+            <if test="answer != null">#{answer},</if>
+            <if test="orderNo != null">#{orderNo},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+    <update id="updateChatTurn" parameterType="Long">
+        update chat_turn
+        <set>
+            <if test="sessionId != null">session_id = #{sessionId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="query != null">query = #{query},</if>
+            <if test="answer != null">answer = #{answer},</if>
+            <if test="orderNo != null">order_no = #{orderNo},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+        where turn_id = #{turnId}
+    </update>
+    <delete id="deleteChatTurnById" parameterType="Long">
+        delete from chat_turn where turn_id = #{turnId}
+    </delete>
+    <delete id="deleteChatTurnBySessionId" parameterType="Long">
+        delete from chat_turn where session_id = #{sessionId}
+    </delete>
+</mapper>
