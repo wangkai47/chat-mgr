@@ -45,5 +45,5 @@ public class CacheConstants
     /**
      * 对话管理中session的 redis key
      */
-    public static final String CHAT_SESSION_KEY = "chat_conv:";
+    public static final String CHAT_CONVERSATION_KEY = "chat_conv:";
 }

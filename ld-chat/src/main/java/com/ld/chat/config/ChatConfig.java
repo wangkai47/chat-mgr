@@ -3,13 +3,17 @@ package com.ld.chat.config;
 import cn.hutool.core.lang.Opt;
 import com.ld.common.enums.ApiTypeEnum;
 import lombok.Data;
+import okhttp3.OkHttpClient;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.TimeUnit;
+
 /**
- * @author jerry
- * @date 2023-3-22
+ * @author wk
+ * @date 2024-3-22
  * 聊天配置参数
  */
 @Data
@@ -17,15 +21,8 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "llm.chat")
 @RefreshScope
 public class ChatConfig {
-    
-    /***大模型配置**********************************************************************/
-    /**
-     * 当前模型选择
-     *
-     * @see ApiTypeEnum
-     */
-    private String apiType;
-    private String modelType;
+
+    private String type;
     
     /************************************************************************************/
     /***以下配置为流控处理******************************************************************/
@@ -78,16 +75,6 @@ public class ChatConfig {
     private Long timeoutMs;
     
     /**
-     * 获取 API 类型枚举
-     *
-     * @return API 类型枚举
-     */
-    public ApiTypeEnum getApiTypeEnum() {
-        
-        return ApiTypeEnum.valueOf(apiType);
-    }
-    
-    /**
      * 获取全局时间内最大请求次数
      *
      * @return 最大请求次数
@@ -130,6 +117,22 @@ public class ChatConfig {
      */
     public Integer getLimitQuestionContextCount() {
         return Opt.ofNullable(limitQuestionContextCount).orElse(0);
+    }
+
+
+    private long connectTimeout;
+
+    private long readTimeout;
+
+    private long writeTimeout;
+
+    @Bean
+    public OkHttpClient getOkHttpClient() {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .connectTimeout(connectTimeout, TimeUnit.MILLISECONDS)
+                .readTimeout(readTimeout, TimeUnit.MILLISECONDS)
+                .writeTimeout(writeTimeout, TimeUnit.MILLISECONDS);
+        return builder.build();
     }
     
 }

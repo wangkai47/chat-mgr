@@ -11,7 +11,7 @@ import com.ld.common.utils.StringUtils;
 import com.ld.framework.security.context.PermissionContextHolder;
 
 /**
- * RuoYi首创 自定义权限实现，ss取自SpringSecurity首字母
+ * 自定义权限实现，ss取自SpringSecurity首字母
  * 
  * @author ruoyi
  */

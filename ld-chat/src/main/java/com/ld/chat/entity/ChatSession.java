@@ -1,4 +1,4 @@
-package com.ld.chat.domain;
+package com.ld.chat.entity;
 
 import java.util.Date;
 import java.util.List;

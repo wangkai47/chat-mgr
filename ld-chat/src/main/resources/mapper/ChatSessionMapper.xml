@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ld.chat.mapper.ChatSessionMapper">
 
-    <resultMap id="BaseResultMap" type="com.ld.chat.domain.ChatSession">
+    <resultMap id="BaseResultMap" type="com.ld.chat.entity.ChatSession">
             <id property="sessionId" column="session_id" jdbcType="BIGINT"/>
             <result property="userId" column="user_id" jdbcType="BIGINT"/>
             <result property="createBy" column="create_by" jdbcType="VARCHAR"/>

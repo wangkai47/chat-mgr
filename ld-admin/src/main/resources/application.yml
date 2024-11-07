@@ -131,11 +131,15 @@ xss:
 
 # 大模型接口
 llm:
-  apiType: ZpKey
+  # qwen, zpai, minimax
+  type: qwen
   chat:
     zpai:
-      zpApiKey: sk-54c8ed67004d4c0c894f3247641ac931
-      zpApiUrl: https://api.zpai.cn/v1/chat/completions
-  type: qwen
-  qwen:
-    apiKey: sk-54c8ed67004d4c0c894f3247641ac931
+      url: https://api.zpai.cn/v1/chat/completions
+      apiKey:
+    minimax:
+      url: https://api.minimax.chat/v1/text/chatcompletion_v2
+      groupId: 1793262119999783547
+      apiKey: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJHcm91cE5hbWUiOiLnjovmgboiLCJVc2VyTmFtZSI6IueOi-aBuiIsIkFjY291bnQiOiIiLCJTdWJqZWN0SUQiOiIxNzkzMjYyMTIwMDA4MTcyMTU1IiwiUGhvbmUiOiIxMzYyNjcxMDA1NCIsIkdyb3VwSUQiOiIxNzkzMjYyMTE5OTk5NzgzNTQ3IiwiUGFnZU5hbWUiOiIiLCJNYWlsIjoiIiwiQ3JlYXRlVGltZSI6IjIwMjQtMDctMDMgMTE6MDM6MzYiLCJpc3MiOiJtaW5pbWF4In0.IDkJq5GVLatSSx4IA-fgGSMqnOXO0UnQQuaXfRNkm7cJPol7JhbMm8f4HFA3yoxaN-GxkMyV1ASyu6kEd8LMbeBuyMQ6d9uAKYRUjloJLYMfIkYmnicuUJ7RFWTBXHSSlh1AoD4qEWrd_DxyDMdHvCN62tGarXhVSpxQWFCFF2LVOirkuzXUONTuOfZFB6Kf4yc7t5bK6r7r4AoOnL_z6VHMcGH0sdI38u61tx3WWcLMk_zw6a3LCcK2_QuS8brq5IUFxNRPiHvMH3D8wcXb2ZV0Euhptb9UADMsN3aFbqY2oKGNfoSTKcoZCHK0LK0yIRW-RQsnUkwAXdjvW6G8hA
+    qwen:
+      apiKey: sk-54c8ed67004d4c0c894f3247641ac931

@@ -1,6 +1,6 @@
 package com.ld.chat.service;
 
-import com.ld.chat.domain.ChatTurn;
+import com.ld.chat.entity.ChatTurn;
 
 import java.util.List;
 

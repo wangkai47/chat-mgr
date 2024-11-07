@@ -1,256 +1,167 @@
 <template>
-  <div class="smart-dialog">
-    <h2>智能助手</h2>
-    <div class="conversation" ref="main">
-      <div
-        v-for="(msg, index) in messages"
-        :key="index"
-        :class="{ 'userD': msg.isUser, 'botD': !msg.isUser }"
-      >
-        <div v-show="!msg.isUser"><svg-icon icon-class="chat_robot" style="width: 24px; height: 24px; background-color: #00afff;" /></div>
-        <div :class="{ 'user': msg.isUser, 'bot': !msg.isUser }">{{ msg.text }}</div>
-        <div v-show="msg.isUser"><svg-icon icon-class="chat_user" style="width: 24px; height: 24px; background-color: #00afff;" /></div>
-      </div>
-    </div>
-    <div>{{ttt}}</div>
-    <div class="input-group">
-      <textarea ref="text" v-model="userInput" @keydown.enter="keyDownHandle" @input="inputHandle" placeholder="请输入您的问题..." maxlength="10000"
-                style="resize: none; height: 24px; min-height: 24px; max-height: 96px; overflow-y: hidden;"></textarea>
-      <svg-icon v-show="disableChat || loading" icon-class="chat_send" />
-      <svg-icon v-show="!disableChat && !loading" icon-class="chat_send_colorful" @click="dialog" />
-    </div>
+  <div class="app-container home">
+    <el-row :gutter="20">
+      <el-col :sm="24" :lg="24" style="padding-left: 20px">
+        <h2>灵动数上科技</h2>
+        <p>
+          灵动数上科技有限公司成立于2023年6月，是一家致力于通过大数据、人工智能、云计算、互联网等技术，帮助企业完成AI+业务创新及落地的高科技企业。致力于为企业级客户提供全流程的“AI+”解决方案，旨在通过人工智能技术赋能各行各业，提升企业运营效率和服务质量。
+        </p>
+        <p>
+          公司的核心创始团队成员均来自国内外的知名科技公司，如旷视科技、百度、阿里巴巴等。团队在人工智能领域有着深厚的技术积累和丰富的实践经验，在多模态生成式大模型技术方面具有独特的竞争优势，成为国内不多的掌握该核心技术的AI公司之一。
+        </p>
+        <p>
+          公司坚持以技术创新为驱动，不断推动人工智能技术的发展和应用。不仅能够有效理解和生成文本、图像、视频等多种形式的数据，还能够进行复杂的推理和决策，为企业提供更加智能化的服务。公司通过深度学习、自然语言处理、计算机视觉、大模型等前沿技术，为客户打造定制化的智能解决方案，帮助他们在激烈的市场竞争中保持领先地位。
+        </p>
+        <p>
+          公司的服务已经深入到政府、能源、医疗、消费零售、金融、教育等多个行业。与各行业的企业合作，共同探索AI技术在不同场景下的应用潜力，为客户提供强大的AI能力和深度场景化智能服务。通过与客户的紧密合作，公司也不断优化产品和服务，确保技术能够真正落地，为客户创造实际价值。
+        </p>
+        <p>
+          <el-button
+            size="mini"
+            icon="el-icon-s-home"
+            plain
+            @click="goTarget('http://www.aileap.chat/')"
+          >访问主页</el-button
+          >
+        </p>
+      </el-col>
+
+    </el-row>
+    <el-divider />
+    <el-row :gutter="20">
+      <el-col :xs="24" :sm="24" :md="12" :lg="8">
+        <el-card class="update-log">
+          <div slot="header" class="clearfix">
+            <span>联系信息</span>
+          </div>
+          <div class="body">
+            <p>
+              <i class="el-icon-s-promotion"></i> 官网：<el-link
+              href="http://www.aileap.chat/"
+              target="_blank"
+            >http://www.aileap.chat/</el-link
+            >
+            </p>
+            <p>
+              <i class="el-icon-user-solid"></i> 联系人：王恺
+            </p>
+            <p>
+              <i class="el-icon-chat-dot-round"></i> 微信：<a
+              href="javascript:;"
+            >灵动数上科技</a
+            >
+            </p>
+          </div>
+        </el-card>
+      </el-col>
+      <el-col :xs="24" :sm="24" :md="12" :lg="8">
+        <el-card class="update-log">
+          <div slot="header" class="clearfix">
+            <span>更新日志</span>
+          </div>
+          <el-collapse accordion>
+            <el-collapse-item title="v1.0.0 - 2024-07-08">
+              <ol>
+                <li>大模型演示系统正式发布</li>
+              </ol>
+            </el-collapse-item>
+          </el-collapse>
+        </el-card>
+      </el-col>
+      <el-col :xs="24" :sm="24" :md="12" :lg="8">
+        <el-card class="update-log">
+          <div slot="header" class="clearfix">
+            <span>待补充</span>
+          </div>
+          <div class="body">
+            ……
+            <span style="display: inline-block; height: 30px; line-height: 30px"
+            >灵动数上科技</span
+            >
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
-import request from '@/utils/request'
-import {getToken} from "@/utils/auth";
-import { fetchEventSource, EventStreamContentType } from '@microsoft/fetch-event-source';
-import { Notification, MessageBox, Message, Loading } from 'element-ui'
-import store from "@/store";
-
 export default {
+  name: "Index",
   data() {
     return {
-      sessionId: '',
-      userInput: '',
-      loading: false,
-      disableChat: true,
-      isComplete: true,
-      ttt: '',
-      messages: [
-        // 示例对话初始化，可省略
-        { text: "您好，请问有什么可以帮助您的？您好，请问有什么可以帮助您的？您好，请问有什么可以帮助您的？您好，请问有什么可以帮助您的？您好，请问有什么可以帮助您的？您好，请问有什么可以帮助您的？您好，请问有什么可以帮助您的？您好，请问有什么可以帮助您的？", isUser: false },
-      ],
+      // 版本号
+      version: "1.0.0"
     };
   },
   methods: {
-    sendMessage() {
-      if (this.userInput.trim()) {
-        const text = this.userInput;
-        this.messages.push({ text: this.userInput, isUser: true });
-        this.userInput = ''; // 清空输入框
-
-        request({
-          url: '/chat/training',
-          headers: {
-            isToken: true
-          },
-          method: 'get',
-          timeout: 20000,
-          params: {
-            query: text,
-            sessionId: this.sessionId
-          }
-        }).then(res => {
-          this.sessionId = res.data.sessionId;
-          this.messages.push({
-            text: res.data.answer,
-            isUser: false,
-          });
-        });
-      }
-    },
-
-    inputHandle() {
-      this.disableChat = !this.userInput.trim();
-      //this.$refs.text.style.height = "auto";
-
-      this.ttt = "调整前：style.height=" + this.$refs.text.style.height + ", scrollHeight=" + this.$refs.text.scrollHeight;
-      const maxHeight = parseInt(this.$refs.text.style.maxHeight);
-      const minHeight = parseInt(this.$refs.text.style.minHeight);
-      if (this.$refs.text.scrollHeight > maxHeight) {
-        this.$refs.text.style.height = maxHeight + "px";
-      } else if (this.$refs.text.scrollHeight < minHeight) {
-        this.$refs.text.style.height = minHeight + "px";
-      } else {
-        this.$refs.text.style.height = this.$refs.text.scrollHeight + "px";
-      }
-      this.ttt = this.ttt + "\n   调整后：style.height=" + this.$refs.text.style.height + ", scrollHeight=" + this.$refs.text.scrollHeight+", lineHeight=" + this.$refs.text.style.lineHeight;
-
-      if (maxHeight < this.$refs.text.scrollHeight) {
-        this.$refs.text.style.overflowY = "auto";
-      } else {
-        this.$refs.text.style.overflowY = "hidden";
-      }
-    },
-
-    keyDownHandle(event) {
-      if (!event.ctrlKey) {
-        // 如果没有按下组合键ctrl，则会阻止默认事件
-        event.preventDefault()
-        if (!this.loading && !event.isComposing) {
-          this.dialog();
-        }
-      } else {
-        // 如果同时按下ctrl+回车键，则会换行
-        this.userInput += '\n'
-      }
-    },
-
-    // 提交对话
-    async dialog() {
-      if (!this.userInput.trim()) {
-        return;
-      }
-      if (this.loading) {
-        return;
-      }
-
-      const text = this.userInput;
-      this.messages.push({ text: this.userInput, isUser: true });
-      this.userInput = ''; // 清空输入框
-      this.inputHandle();
-      const thisObj = this;
-
-      const ctrl = new AbortController() // 创建AbortController实例，以便中止请求
-      const source = await fetchEventSource(process.env.VUE_APP_BASE_API + '/chat/dialog', {
-        method: 'POST',
-        headers: {
-          isToken: true,
-          'Authorization': 'Bearer ' + getToken(), // 让每个请求携带自定义token 请根据实际情况自行修改
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache'
-        },
-        body: JSON.stringify({
-          question: text
-        }),
-        openWhenHidden: true, // 取消visibilityChange事件
-        signal: ctrl.signal, // AbortSignal
-        async onopen(response) {
-          if (response.ok) {
-            return; //一切正常
-          } else if(response.status == 401) {
-            MessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', { confirmButtonText: '重新登录', cancelButtonText: '取消', type: 'warning' }).then(() => {
-              store.dispatch('LogOut').then(() => {
-                location.href = '/index';
-              })
-            });
-          } else {
-            Promise.reject(new Error(JSON.stringify({
-              status: response.status,
-              message: response.statusText
-            })));
-          }
-        },
-        async onmessage(ev) {
-          //const data = JSON.parse(ev.data)
-          if (!thisObj.loading) {
-            thisObj.messages.push({ text: ev.data, isUser: false });
-            thisObj.loading = true;
-          } else if (ev.data) {
-            thisObj.$set(thisObj.messages, thisObj.messages.length - 1, { text: ev.data, isUser: false });
-          }
-
-          thisObj.$refs.main.scrollTo({top: thisObj.$refs.main.scrollHeight, behavior: 'smooth'});
-        },
-        onclose() {
-          thisObj.loading = false;
-          ctrl.abort();
-        },
-        onerror(err) {
-          thisObj.loading = false;
-          ctrl.abort();
-          this.close();
-        }
-      });
-    },
-  },
+    goTarget(href) {
+      window.open(href, "_blank");
+    }
+  }
 };
 </script>
 
-<style scoped>
-.smart-dialog {
-  margin: 10px auto;
-  border: 1px solid #ccc;
-  padding: 10px 20px;
-}
+<style scoped lang="scss">
+.home {
+  blockquote {
+    padding: 10px 20px;
+    margin: 0 0 20px;
+    font-size: 17.5px;
+    border-left: 5px solid #eee;
+  }
+  hr {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 0;
+    border-top: 1px solid #eee;
+  }
+  .col-item {
+    margin-bottom: 20px;
+  }
 
-.conversation {
-  overflow-y: auto;
-  height: 400px;
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 10px;
-}
+  ul {
+    padding: 0;
+    margin: 0;
+  }
 
-.userD {
-  display: flex;
-  text-align: right;
-  margin-bottom: 5px;
-  border-radius: 5px;
-}
+  font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  color: #676a6c;
+  overflow-x: hidden;
 
-.user {
-  text-align: right;
-  background-color: #f9f9f9;
-  padding: 5px 10px;
-  margin-bottom: 5px;
-  margin-right: 5px;
-  border-radius: 5px;
-}
+  ul {
+    list-style-type: none;
+  }
 
-.botD {
-  display: flex;
-  text-align: left;
-  margin-bottom: 5px;
-  border-radius: 5px;
-}
+  h4 {
+    margin-top: 0px;
+  }
 
-.bot {
-  text-align: left;
-  background-color: #e6f2ff;
-  padding: 5px 10px;
-  margin-bottom: 5px;
-  margin-left: 5px;
-  border-radius: 5px;
-}
+  h2 {
+    margin-top: 10px;
+    font-size: 26px;
+    font-weight: 100;
+  }
 
-.input-group {
-  display: flex;
-  vertical-align: bottom;
-}
+  p {
+    margin-top: 10px;
 
-.input-group textarea {
-  background: transparent !important;
-  box-shadow: none !important;
-  caret-color: #26244c !important;
-  color: #26244c !important;
-  font-size: 16px;
-  line-height: normal;
-  line-height: 24px;
-  min-height: 28px;
-  outline: 0;
-  padding: 0 8px 0 0;
-  resize: none;
-  transition: none !important;
-  width: 100%;
-}
+    b {
+      font-weight: 700;
+    }
+  }
 
-.input-group button {
-  padding: 5px 10px;
-}
-.input-group svg {
-  width: 20px;
-  height: 20px;
+  .update-log {
+    ol {
+      display: block;
+      list-style-type: decimal;
+      margin-block-start: 1em;
+      margin-block-end: 1em;
+      margin-inline-start: 0;
+      margin-inline-end: 0;
+      padding-inline-start: 40px;
+    }
+  }
 }
 </style>

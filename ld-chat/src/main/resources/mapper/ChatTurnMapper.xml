@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ld.chat.mapper.ChatTurnMapper">
 
-    <resultMap id="BaseResultMap" type="com.ld.chat.domain.ChatTurn">
+    <resultMap id="BaseResultMap" type="com.ld.chat.entity.ChatTurn">
             <id property="turnId" column="turn_id" jdbcType="BIGINT"/>
             <result property="sessionId" column="session_id" jdbcType="VARCHAR"/>
             <result property="userId" column="user_id" jdbcType="BIGINT"/>
@@ -22,13 +22,13 @@
         query,answer,order_no,create_by,
         create_time,update_by,update_time
     </sql>
-    <select id="selectChatTurnListBySessionId" parameterType="String" resultType="com.ld.chat.domain.ChatTurn">
+    <select id="selectChatTurnListBySessionId" parameterType="String" resultType="com.ld.chat.entity.ChatTurn">
         select
         <include refid="Base_Column_List"/>
         from chat_turn
         where session_id = #{sessionId}
     </select>
-    <select id="selectChatTurnById" parameterType="String" resultType="com.ld.chat.domain.ChatTurn">
+    <select id="selectChatTurnById" parameterType="String" resultType="com.ld.chat.entity.ChatTurn">
         select
         <include refid="Base_Column_List"/>
         from chat_turn

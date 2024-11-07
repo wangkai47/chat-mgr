@@ -1,7 +1,5 @@
 package com.ld.chat.service;
 
-import com.ld.chat.domain.ChatSession;
-
 /**
 * @author wangkai
 * @description 针对表【chat_session(会话管理表)】的数据库操作Service

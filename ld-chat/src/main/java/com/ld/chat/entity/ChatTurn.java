@@ -1,4 +1,4 @@
-package com.ld.chat.domain;
+package com.ld.chat.entity;
 
 import java.io.Serializable;
 import java.util.Date;

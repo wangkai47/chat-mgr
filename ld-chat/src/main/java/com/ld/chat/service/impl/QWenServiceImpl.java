@@ -7,11 +7,9 @@ import com.alibaba.dashscope.common.ResultCallback;
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.utils.JsonUtils;
+import com.ld.chat.domain.LLMChatResponse;
 import com.ld.chat.service.ILLMService;
-import com.ld.common.constant.Constants;
-import com.ld.common.utils.MessageUtils;
-import com.ld.framework.manager.AsyncManager;
-import com.ld.framework.manager.factory.AsyncFactory;
+import com.ld.chat.utils.ObjectMapperUtil;
 import io.reactivex.Flowable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +24,7 @@ import java.io.IOException;
 @ConditionalOnProperty(name = "llm.type", havingValue = "qwen")
 public class QWenServiceImpl implements ILLMService {
 
-    @Value("${llm.qwen.apiKey}")
+    @Value("${llm.chat.qwen.apiKey}")
     private String apiKey;
 
     public String call(String prompt) {
@@ -62,14 +60,15 @@ public class QWenServiceImpl implements ILLMService {
         Flowable<GenerationResult> result = null;
         long startTime = System.currentTimeMillis();
         try {
-            generation.streamCall(param, new ResultCallback<GenerationResult>() {
+            generation.streamCall(param, new ResultCallback<>() {
                 @Override
                 public void onEvent(GenerationResult message) {
-                    System.out.println(message.getOutput().getText());
+                    //log.debug(message.getOutput().getText());
+                    LLMChatResponse llmChatResponse = new LLMChatResponse(null, false, false, message.getOutput().getText());
                     try {
-                        sseEmitter.send(message.getOutput().getText());
+                        sseEmitter.send(ObjectMapperUtil.toJson(llmChatResponse));
                     } catch (IOException e) {
-                        e.printStackTrace();
+                       log.error("Response send error.", e);
                     }
                 }
 
@@ -85,10 +84,10 @@ public class QWenServiceImpl implements ILLMService {
                 }
             });
         } catch (NoApiKeyException e) {
-            log.error("模型调用失败，NoApiKey：" + apiKey, e);
+            log.error("模型apikey错误，NoApiKey：" + apiKey, e);
             sseEmitter.completeWithError(e);
         } catch (InputRequiredException e) {
-            log.error("模型调用失败，prompt：" + prompt, e);
+            log.error("模型输入错误，Prompt：" + prompt, e);
             sseEmitter.completeWithError(e);
         }
     }
